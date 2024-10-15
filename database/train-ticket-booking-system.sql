@@ -327,6 +327,8 @@ FROM TrainJourney tj
 JOIN Train t ON tj.trainID = t.TrainID
 
 -- depatureStation and departureTime
+
+select * from trainjourney
 SELECT 
     st.stationName,
     sp.departureTime
@@ -463,6 +465,8 @@ RETURN
 go
 
 SELECT trainJourneyID, trainJourneyName, TrainNumber, departureStation, arrivalStation, departureTime, arrivalTime, totalDistance, bookedTickets, totalSeats FROM dbo.fn_GetAllTrainJourneyDetails();
+
+select * from TrainJourney
 
 
 

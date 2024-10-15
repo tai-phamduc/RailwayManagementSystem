@@ -5,6 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -24,7 +28,6 @@ import dao.TrainJourneyDAO;
 import entity.Line;
 import entity.Stop;
 import entity.Train;
-import entity.TrainJourney;
 import gui.application.Application;
 import net.miginfocom.swing.MigLayout;
 
@@ -60,6 +63,8 @@ public class TrainJourneyAddingDialog extends JDialog implements ActionListener 
 	private JPanel container4;
 	private JPanel buttonContainer;
 	private TrainJourneyDAO trainJourneyDAO;
+	private ArrayList<StopRow> stopRowList;
+	private List<Stop> stopList;
 
     public TrainJourneyAddingDialog() {
     	trainDAO = new TrainDAO();
@@ -99,7 +104,7 @@ public class TrainJourneyAddingDialog extends JDialog implements ActionListener 
     	// this is a text field component
     	tenChuyenTauContainer = new JPanel(new MigLayout("wrap", "[]", "[][]"));
     	tenChuyenTauLabel = new JLabel("Tên chuyến tàu");
-    	tenChuyenTauTextField = new JTextField(10);
+    	tenChuyenTauTextField = new JTextField(15);
     	tenChuyenTauContainer.add(tenChuyenTauLabel);
     	tenChuyenTauContainer.add(tenChuyenTauTextField);
     	//////////////////////////////////////////////
@@ -168,6 +173,7 @@ public class TrainJourneyAddingDialog extends JDialog implements ActionListener 
     	container.add(container4);
     	
     	duongDiCombobox.addActionListener(e -> reloadStops());  
+    	themTauButton.addActionListener(this);
     	
     }
    
@@ -185,11 +191,13 @@ public class TrainJourneyAddingDialog extends JDialog implements ActionListener 
     	container3.add(header);
     	
         Line selectedLine = (Line) duongDiCombobox.getSelectedItem();
+        stopRowList = new ArrayList<StopRow>();
         if (selectedLine != null) {
-            List<Stop> stopList = lineDAO.getLineStops(selectedLine.getLineID()); 
+            stopList = lineDAO.getLineStops(selectedLine.getLineID()); 
 
             for (Stop stop : stopList) {
                 StopRow stopRow = new StopRow(stop);
+                stopRowList.add(stopRow);
                 container3.add(stopRow);
             }
         }
@@ -205,11 +213,21 @@ public class TrainJourneyAddingDialog extends JDialog implements ActionListener 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(themTauButton)) {
 			// get all the fields 
-			String tenChuyenTau = tenChuyenTauTextField.getText().trim();
-			Train tau = (Train) tauCombobox.getSelectedItem();
-			Line duongDi = (Line) duongDiCombobox.getSelectedItem();
-			double giaGoc = Double.parseDouble(giaGocTextField.getText().trim());
-			trainJourneyDAO.addTrainJourney(new TrainJourney(tenChuyenTau, tau, duongDi, giaGoc));
+//			String tenChuyenTau = tenChuyenTauTextField.getText().trim();
+//			Train tau = (Train) tauCombobox.getSelectedItem();
+//			Line duongDi = (Line) duongDiCombobox.getSelectedItem();
+//			double giaGoc = Double.parseDouble(giaGocTextField.getText().trim());
+//			int trainJourneyID = trainJourneyDAO.addTrainJourney(new TrainJourney(tenChuyenTau, tau, duongDi, giaGoc));
+			// add all the stops of the train journey
+			// get all the stops and put them in the array
+			
+			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			LocalDate screeningDateLocalDate = LocalDate.parse(screeningDate, formatter);
+			
+			for (int i = 0; i < stopRowList.size(); i++) {
+				LocalDate departureDate = LocalDate.parse(stopRowList.get(i).getDepartureDateTexField().getText().trim());
+				stopList.get(i).setDepartureDate(departureDate);
+			}
 		}
 	}
 

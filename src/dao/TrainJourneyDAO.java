@@ -52,9 +52,28 @@ public class TrainJourneyDAO {
 		return trainJourneyDetailsList;
 	}
 
-	public void addTrainJourney(TrainJourney trainJourney) {
+	public int addTrainJourney(TrainJourney trainJourney) {
 		
+		Connection connection = connectDB.getConnection();
+		ResultSet generatedKeys = null;
 		
+		try {
+			PreparedStatement s = connection.prepareStatement("INSERT INTO TrainJourney (trainJourneyName, trainID, lineID, basePrice) VALUES (?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			s.setString(1, trainJourney.getTraInJourneyName());
+			s.setInt(2, trainJourney.getTrain().getTrainID());
+			s.setInt(3,  trainJourney.getLine().getLineID());
+			s.setDouble(4, trainJourney.getBasePrice());
+			int status = s.executeUpdate();
+	        if (status == 1) {
+	            generatedKeys = s.getGeneratedKeys();
+	            if (generatedKeys.next()) {
+	                return generatedKeys.getInt(1);
+	            }
+	        }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
 	}	
 	
 }
