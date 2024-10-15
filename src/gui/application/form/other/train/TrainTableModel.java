@@ -1,4 +1,4 @@
-package gui.application.form.other;
+package gui.application.form.other.train;
 
 import java.util.List;
 
@@ -20,7 +20,6 @@ public class TrainTableModel extends AbstractTableModel {
 	
 	@Override
 	public String getColumnName(int column) {
-		// TODO Auto-generated method stub
 		return columnNames[column];
 	}
 
@@ -59,6 +58,10 @@ public class TrainTableModel extends AbstractTableModel {
 				return trainDetails.getStatus();
 		}
 		return null;
+	}
+
+	public void setTrainDetailsList(List<TrainDetails> trainDetailsLists) {
+		this.trainDetailsList = trainDetailsLists;	
 	}
 
 }

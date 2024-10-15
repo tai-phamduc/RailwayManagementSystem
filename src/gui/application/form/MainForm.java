@@ -10,6 +10,8 @@ import javax.swing.border.EmptyBorder;
 
 import entity.Employee;
 import gui.application.Application;
+import gui.application.form.other.train.FormTrainManagement;
+import gui.application.form.other.train_journey.FormTrainJourneyManagement;
 import gui.menu.other.Menu;
 import gui.menu.other.MenuAction;
 import gui.other.MainFormLayout;
@@ -49,14 +51,14 @@ public class MainForm extends JLayeredPane {
 				action.cancel();
 				break;
 			}
-//			if (employee.getRole().equalsIgnoreCase("Manager")) {
-//				switch (index) {
-//				case 0:
-//					Application.showMainForm(new FormMovieManagement());
-//					break;
-//				case 1:
-//					Application.showMainForm(new FormScreeningManagement(employee));
-//					break;
+			if (employee.getRole().equalsIgnoreCase("Manager")) {
+				switch (index) {
+				case 0:
+					Application.showMainForm(new FormTrainManagement());
+					break;
+				case 1:
+					Application.showMainForm(new FormTrainJourneyManagement(employee));
+					break;
 //				case 2:
 //					Application.showMainForm(new FormStaffManagement(employee));
 //					break;
@@ -111,15 +113,15 @@ public class MainForm extends JLayeredPane {
 //				case 7:
 //					Application.logout();
 //					break;
-//				default:
-//					action.cancel();
-//					break;
-//				}
-//			} else {
-//				switch (index) {
-//				case 0:
-//					Application.showMainForm(new FormMovieManagement());
-//					break;
+				default:
+					action.cancel();
+					break;
+				}
+			} else {
+				switch (index) {
+				case 0:
+					Application.showMainForm(new FormTrainManagement());
+					break;
 //				case 1:
 //					Application.showMainForm(new FormScreeningManagement(employee));
 //					break;
@@ -174,11 +176,11 @@ public class MainForm extends JLayeredPane {
 //				case 7:
 //					Application.logout();
 //					break;
-//				default:
-//					action.cancel();
-//					break;
-//				}
-//			}
+				default:
+					action.cancel();
+					break;
+				}
+			}
 		});
 
 	}

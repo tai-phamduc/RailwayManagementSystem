@@ -2,41 +2,37 @@ package entity;
 
 public class Seat {
 
-	private String seatID;
-	private String seatName;
-	private String seatType;
+	private int seatID;
+	private int seatNumber;
 	private Coach coach;
 
-	public Seat(String seatID, String seatName, String seatType, Coach coach) {
+	public Seat(int seatID, int seatNumber, Coach coach) {
 		super();
 		this.seatID = seatID;
-		this.seatName = seatName;
-		this.seatType = seatType;
+		this.seatNumber = seatNumber;
+		this.coach = coach;
+	}
+	
+	public Seat(int seatNumber, Coach coach) {
+		super();
+		this.seatNumber = seatNumber;
 		this.coach = coach;
 	}
 
-	public String getSeatID() {
+	public int getSeatID() {
 		return seatID;
 	}
 
-	public void setSeatID(String seatID) {
+	public void setSeatID(int seatID) {
 		this.seatID = seatID;
 	}
 
-	public String getSeatName() {
-		return seatName;
+	public int getSeatNumber() {
+		return seatNumber;
 	}
 
-	public void setSeatName(String seatName) {
-		this.seatName = seatName;
-	}
-
-	public String getSeatType() {
-		return seatType;
-	}
-
-	public void setSeatType(String seatType) {
-		this.seatType = seatType;
+	public void setSeatNumber(int seatNumber) {
+		this.seatNumber = seatNumber;
 	}
 
 	public Coach getCoach() {
@@ -45,12 +41,6 @@ public class Seat {
 
 	public void setCoach(Coach coach) {
 		this.coach = coach;
-	}
-
-	@Override
-	public String toString() {
-		return "Seat [seatID=" + seatID + ", seatName=" + seatName + ", seatType=" + seatType + ", coach=" + coach
-				+ "]";
 	}
 
 }

@@ -24,8 +24,6 @@ CREATE TABLE Account (
     EmployeeID VARCHAR(50) NOT NULL,          -- Foreign key referencing EmployeeID
     FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID)  -- Foreign key constraint
 );
-
-INSERT INTO Account (Username, Password, EmployeeID) VALUES ('admin', '123', '1');
 go
 
 CREATE   FUNCTION [dbo].[getEmployeeByAccount](@user VARCHAR(50))
@@ -148,6 +146,313 @@ RETURN
     GROUP BY 
         t.TrainID, t.TrainNumber, t.Status
 );
+go
+
+select * from train
+
+select * from train where TrainNumber LIKE '%%'
+select * from coach
+
+SELECT TrainID, TrainNumber, Status FROM Train WHERE TrainID = 3
+
+SELECT COUNT(c.CoachID) AS NumberOfCoaches FROM Train t LEFT JOIN Coach c ON t.TrainID = c.TrainID WHERE T.TrainID = 3 GROUP BY t.TrainID, t.TrainNumber 
+
+SELECT * FROM Coach WHERE TrainID = 3
+
+CREATE TABLE Line (
+    lineID INT IDENTITY(1,1) PRIMARY KEY,
+    lineName NVARCHAR(255) NOT NULL
+);
+
+CREATE TABLE TrainJourney (
+    trainJourneyID INT IDENTITY(1,1) PRIMARY KEY,
+    trainJourneyName NVARCHAR(255) NOT NULL,
+    trainID INT NOT NULL,
+	lineID INT,
+    basePrice DECIMAL(10, 2) NOT NULL,
+	CONSTRAINT FK_Line FOREIGN KEY (lineID) REFERENCES Line(lineID),
+    CONSTRAINT FK_Train FOREIGN KEY (trainID) REFERENCES Train(trainID)
+);
+
+CREATE TABLE Station (
+    stationID INT IDENTITY(1,1) PRIMARY KEY,
+    stationName NVARCHAR(255) NOT NULL
+);
+
+CREATE TABLE LineStop (
+    lineID INT NOT NULL, 
+    stationID INT NOT NULL,
+    stopOrder INT NOT NULL, 
+    distance INT NOT NULL,
+
+    PRIMARY KEY (lineID, stationID),
+
+    CONSTRAINT FK_LineStop FOREIGN KEY (lineID) REFERENCES Line(lineID) 
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_Station FOREIGN KEY (stationID) REFERENCES Station(stationID) 
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Stop (
+    stopID INT IDENTITY(1,1) PRIMARY KEY, 
+    trainJourneyID INT NOT NULL, 
+    stationID INT NOT NULL, 
+    stopOrder INT NOT NULL,
+    distance INT NOT NULL, 
+    arrivalTime DATETIME NOT NULL,
+    departureTime DATETIME NOT NULL,
+
+    CONSTRAINT FK_TrainJourney FOREIGN KEY (trainJourneyID) REFERENCES TrainJourney(trainJourneyID)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FK_NotLineStation FOREIGN KEY (stationID) REFERENCES Station(stationID)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE Passenger (
+    passengerID INT IDENTITY(1,1) PRIMARY KEY,
+    fullName NVARCHAR(255) NOT NULL, 
+    passengerType NVARCHAR(50) NOT NULL,
+    identificationNumber NVARCHAR(50) NOT NULL	
+);
+
+CREATE TABLE Customer (
+    customerID INT IDENTITY(1,1) PRIMARY KEY,
+    fullName NVARCHAR(255) NOT NULL,
+    phoneNumber NVARCHAR(15) NOT NULL, 
+    email NVARCHAR(255) NOT NULL UNIQUE,
+    identificationNumber NVARCHAR(50) NOT NULL
+);
+
+CREATE TABLE [Order] (
+    orderID INT IDENTITY(1,1) PRIMARY KEY,
+    orderDate DATETIME NOT NULL,
+    note NVARCHAR(255),
+    paymentMethod NVARCHAR(50) NOT NULL, 
+    customerID INT NOT NULL,
+    trainJourneyID INT NOT NULL,
+    employeeID VARCHAR(50) NOT NULL,
+    FOREIGN KEY (customerID) REFERENCES Customer(customerID),
+    FOREIGN KEY (trainJourneyID) REFERENCES TrainJourney(trainJourneyID),
+    FOREIGN KEY (employeeID) REFERENCES Employee(employeeID)
+);
+
+CREATE TABLE Ticket (
+    ticketID INT IDENTITY(1,1) PRIMARY KEY, -- Auto-incremented key
+    trainJourneyID INT NOT NULL,  -- Foreign key reference to TrainJourney
+    seatID INT NOT NULL,  -- Foreign key reference to Seat
+    passengerID INT NOT NULL,  -- Foreign key reference to Passenger
+    orderID INT NOT NULL,  -- Foreign key reference to Order
+    FOREIGN KEY (trainJourneyID) REFERENCES TrainJourney(trainJourneyID),
+    FOREIGN KEY (seatID) REFERENCES Seat(seatID),
+    FOREIGN KEY (passengerID) REFERENCES Passenger(passengerID),
+    FOREIGN KEY (orderID) REFERENCES [Order](orderID)
+);
+
+CREATE TABLE TicketDetail (
+    stopID INT NOT NULL,  -- Foreign key reference to Stop
+    ticketID INT NOT NULL,  -- Foreign key reference to Ticket
+    PRIMARY KEY (stopID, ticketID),  -- Composite primary key
+    FOREIGN KEY (stopID) REFERENCES Stop(stopID),
+    FOREIGN KEY (ticketID) REFERENCES Ticket(ticketID)
+);
+
+INSERT INTO Line (lineName) VALUES (N'Đà Lạt - Trại Mát')
+INSERT INTO TrainJourney (trainJourneyName, trainID, lineID, basePrice) VALUES (N'Đà lạt - Trại Mát 9:55am', 7, 1, 2000);
+INSERT INTO Station (stationName) VALUES (N'Đà Lạt')
+INSERT INTO Station (stationName) VALUES (N'Trại Mát')
+INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (1, 1, 1, 0)
+INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (1, 2, 2, 7)
+INSERT INTO Stop (trainJourneyID, stationID, stopOrder, distance, arrivalTime, departureTime) VALUES (1, 1, 1, 0, '2024-10-16 09:55:00', '2024-10-16 09:55:00')
+INSERT INTO Stop (trainJourneyID, stationID, stopOrder, distance, arrivalTime, departureTime) VALUES (1, 2, 2, 7, '2024-10-16 10:25:00', '2024-10-16 10:25:00')
+INSERT INTO Passenger (fullName, passengerType, identificationNumber) VALUES (N'Phạm Đức Tài', N'Người lớn', '080203001008')
+INSERT INTO Customer (fullName, phoneNumber, email, identificationNumber) VALUES (N'Phạm Đức Tài', '0846107843', 'phamductai10272003@gmail.com', '080203001008')
+INSERT INTO [Order] (orderDate, note, paymentMethod, customerID, trainJourneyID, employeeID) VALUES (GETDATE(), N'Đây là một ghi chú', N'Tiền mặt', 1, 1, '1')
+INSERT INTO Ticket (trainJourneyID, seatID, passengerID, orderID) VALUES (1, 997, 1, 1)
+INSERT INTO TicketDetail (stopID, ticketID) VALUES (1, 1)
+INSERT INTO TicketDetail (stopID, ticketID) VALUES (2, 1)
+
+{ "Mã chuyến tàu", "Số hiệu tàu", "Hành trình", "Thời gian", "Cự ly", "Tổng hành khách")
+
+WRITE A QUERY TO TAKE OUT THESE COLUMNS TrainJourneyID, trainID, train journey departureStation - arrivalStation as Journey, trainJourney departuretime - arrivaltime as time, train journey distance, ticketbooked/numberOfSeats as Book
+
+SELECT 
+    tj.trainJourneyID,
+    tj.trainID,
+    CONCAT(s1.stationName, ' - ', s2.stationName) AS Journey,
+    CONCAT(st1.departureTime, ' - ', st2.arrivalTime) AS Time,
+    SUM(st1.distance) AS Distance,
+    COUNT(t.ticketID) / SUM(c.Capacity) AS Book
+FROM 
+    TrainJourney tj
+JOIN 
+    Stop st1 ON tj.trainJourneyID = st1.trainJourneyID
+JOIN 
+    Stop st2 ON tj.trainJourneyID = st2.trainJourneyID AND st2.stopOrder = (
+        SELECT MAX(stopOrder) FROM Stop WHERE trainJourneyID = tj.trainJourneyID
+    )
+JOIN 
+    Station s1 ON st1.stationID = s1.stationID
+JOIN 
+    Station s2 ON st2.stationID = s2.stationID
+JOIN 
+    Ticket t ON tj.trainJourneyID = t.trainJourneyID
+JOIN 
+    Seat se ON t.seatID = se.SeatID
+JOIN 
+    Coach c ON se.CoachID = c.CoachID
+GROUP BY 
+    tj.trainJourneyID, tj.trainID, s1.stationName, s2.stationName, st1.departureTime, st2.arrivalTime;
+
+-- trainJourneyID, trainJourneyName, TrainNumber
+SELECT trainJourneyID, trainJourneyName, TrainNumber
+FROM TrainJourney tj
+JOIN Train t ON tj.trainID = t.TrainID
+
+-- depatureStation and departureTime
+SELECT 
+    st.stationName,
+    sp.departureTime
+FROM 
+    TrainJourney tj
+JOIN 
+    Stop sp ON tj.trainJourneyID = sp.trainJourneyID
+JOIN 
+    Station st ON sp.stationID = st.stationID
+WHERE tj.trainJourneyID = 1 AND stopOrder = 1
+
+-- arrivalStaion and arrivalTime
+SELECT 
+    st.stationName AS arrivalStation,
+    sp.arrivalTime AS arrivalTime,
+	distance
+FROM 
+    TrainJourney tj
+JOIN 
+    Stop sp ON tj.trainJourneyID = sp.trainJourneyID
+JOIN 
+    Station st ON sp.stationID = st.stationID
+WHERE 
+    tj.trainJourneyID = 1 
+    AND sp.stopOrder = (
+        SELECT MAX(stopOrder) 
+        FROM Stop 
+        WHERE trainJourneyID = tj.trainJourneyID
+    );
+
+-- number of seats
+select count(SeatNumber) as NumberOfSeats
+from train t join coach c on t.TrainID = c.TrainID join seat s on c.CoachID = s.CoachID
+where t.TrainID = 7
+
+select count(ticketID) as BookedTicket
+from Ticket
+where trainJourneyID = 1
+--------------------------------------
+--------------------------------------
+--------------------------------------
+--------------------------------------
+
+go
+CREATE FUNCTION dbo.fn_GetAllTrainJourneyDetails()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT 
+        tj.trainJourneyID,
+        tj.trainJourneyName,
+        t.TrainNumber,
+        
+        -- Departure station and time
+        (SELECT 
+            st1.stationName
+         FROM 
+            Stop sp1
+         JOIN 
+            Station st1 ON sp1.stationID = st1.stationID
+         WHERE 
+            sp1.trainJourneyID = tj.trainJourneyID 
+            AND sp1.stopOrder = 1) AS departureStation,
+        
+        (SELECT 
+            sp1.departureTime
+         FROM 
+            Stop sp1
+         WHERE 
+            sp1.trainJourneyID = tj.trainJourneyID 
+            AND sp1.stopOrder = 1) AS departureTime,
+        
+        -- Arrival station and time
+        (SELECT 
+            st2.stationName
+         FROM 
+            Stop sp2
+         JOIN 
+            Station st2 ON sp2.stationID = st2.stationID
+         WHERE 
+            sp2.trainJourneyID = tj.trainJourneyID 
+            AND sp2.stopOrder = (
+                SELECT MAX(stopOrder) 
+                FROM Stop 
+                WHERE trainJourneyID = tj.trainJourneyID
+            )) AS arrivalStation,
+        
+        (SELECT 
+            sp2.arrivalTime
+         FROM 
+            Stop sp2
+         WHERE 
+            sp2.trainJourneyID = tj.trainJourneyID 
+            AND sp2.stopOrder = (
+                SELECT MAX(stopOrder) 
+                FROM Stop 
+                WHERE trainJourneyID = tj.trainJourneyID
+            )) AS arrivalTime,
+            
+        -- Total distance of journey
+        (SELECT 
+            SUM(distance)
+         FROM 
+            Stop
+         WHERE 
+            trainJourneyID = tj.trainJourneyID) AS totalDistance,
+
+        -- Total number of seats in the train
+        (SELECT 
+            COUNT(s.SeatNumber)
+         FROM 
+            Train t1
+         JOIN 
+            Coach c ON t1.TrainID = c.TrainID
+         JOIN 
+            Seat s ON c.CoachID = s.CoachID
+         WHERE 
+            t1.TrainID = t.TrainID) AS totalSeats,
+
+        -- Booked tickets for the journey
+        (SELECT 
+            COUNT(ticketID)
+         FROM 
+            Ticket
+         WHERE 
+            trainJourneyID = tj.trainJourneyID) AS bookedTickets
+
+    FROM 
+        TrainJourney tj
+    JOIN 
+        Train t ON tj.trainID = t.TrainID
+);
+go
+
+SELECT trainJourneyID, trainJourneyName, TrainNumber, departureStation, arrivalStation, departureTime, arrivalTime, totalDistance, bookedTickets, totalSeats FROM dbo.fn_GetAllTrainJourneyDetails();
+   
+
+
+
+
+
+
+
 
 
 

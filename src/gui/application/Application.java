@@ -20,6 +20,7 @@ import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import entity.Employee;
 import gui.application.form.LoginForm;
 import gui.application.form.MainForm;
+import gui.application.form.other.train.FormTrainManagement;
 
 public class Application extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -31,10 +32,11 @@ public class Application extends JFrame {
 	private Application() {
 		initComponents();
 		loginForm = new LoginForm();
-		setContentPane(loginForm);
-//		employee = new Employee("1", "Pham Duc Tai", true, LocalDate.of(2003, 10, 27), "phamductai102703", "0846107843", "Manager", LocalDate.of(2024, 1, 5), 1000, "/images/avatar");
-//		mainForm = new MainForm(employee);
-//		setContentPane(mainForm);
+//		setContentPane(loginForm);
+		employee = new Employee("1", "Pham Duc Tai", true, LocalDate.of(2003, 10, 27), "phamductai102703", "0846107843", "Manager", LocalDate.of(2024, 1, 5), 1000, "/images/avatar");
+		mainForm = new MainForm(employee);
+		mainForm.showForm(new FormTrainManagement());
+		setContentPane(mainForm);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		app = this;
 	}
@@ -93,11 +95,12 @@ public class Application extends JFrame {
 		FlatLaf.registerCustomDefaultsSource("gui.theme");
 		UIManager.put("defaultFont", new Font(FlatRobotoFont.FAMILY, Font.PLAIN, 16));
 		int now = LocalTime.now().getHour();
-		if (now >= 6 && now <= 18) {
-			FlatMacLightLaf.setup();
-		} else {
-			FlatMacDarkLaf.setup();
-		}
+//		if (now >= 6 && now <= 18) {
+//			FlatMacLightLaf.setup();
+//		} else {
+//			FlatMacDarkLaf.setup();
+//		}
+		FlatMacLightLaf.setup();
 		SwingUtilities.invokeLater(() -> new Application().setVisible(true));
 	}
 

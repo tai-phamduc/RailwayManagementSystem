@@ -2,32 +2,45 @@ package entity;
 
 public class Coach {
 
-	private String coachID;
-	private String coachNumber;
+	private int coachID;
+	private int coachNumber;
 	private String coachType;
+	private int capacity;
 	private Train train;
 
-	public Coach(String coachID, String coachNumber, String coachType, Train train) {
+	public Coach(int coachID, int coachNumber, String coachType, int capacity, Train train) {
 		super();
 		this.coachID = coachID;
 		this.coachNumber = coachNumber;
 		this.coachType = coachType;
+		this.capacity = capacity;
 		this.train = train;
 	}
 
-	public String getCoachID() {
-		return coachID;
+	public Coach(int coachNumber, String coachType, int capacity, Train train) {
+		this.coachNumber = coachNumber;
+		this.coachType = coachType;
+		this.capacity = capacity;
+		this.train = train;
 	}
 
-	public void setCoachID(String coachID) {
+	public Coach(int coachID) {
 		this.coachID = coachID;
 	}
 
-	public String getCoachNumber() {
+	public int getCoachID() {
+		return coachID;
+	}
+
+	public void setCoachID(int coachID) {
+		this.coachID = coachID;
+	}
+
+	public int getCoachNumber() {
 		return coachNumber;
 	}
 
-	public void setCoachNumber(String coachNumber) {
+	public void setCoachNumber(int coachNumber) {
 		this.coachNumber = coachNumber;
 	}
 
@@ -47,10 +60,18 @@ public class Coach {
 		this.train = train;
 	}
 
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+
 	@Override
 	public String toString() {
-		return "Coach [coachID=" + coachID + ", coachNumber=" + coachNumber + ", coachType=" + coachType + ", train="
-				+ train + "]";
+		return "Coach [coachID=" + coachID + ", coachNumber=" + coachNumber + ", coachType=" + coachType + ", capacity="
+				+ capacity + ", train=" + train + "]";
 	}
 
 }

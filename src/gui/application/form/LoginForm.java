@@ -20,7 +20,7 @@ import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import controller.CtrlLoginForm;
 import entity.Employee;
 import gui.application.Application;
-import gui.application.form.other.FormTrainManagement;
+import gui.application.form.other.train.FormTrainManagement;
 import gui.other.LoginFormLayout;
 import gui.other.LoginLayout;
 import raven.swing.blur.BlurBackground;
