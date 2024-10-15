@@ -11,10 +11,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,8 +30,9 @@ import javax.swing.table.TableCellRenderer;
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
+import dao.TrainJourneyDAO;
 import entity.Employee;
-import entity.TrainJourney;
+import entity.TrainJourneyDetails;
 import gui.application.Application;
 import net.miginfocom.swing.MigLayout;
 
@@ -42,14 +45,18 @@ public class FormTrainJourneyManagement extends JPanel implements ActionListener
 	private JButton deleteButton;
 	private JPanel container0;
 	private JPanel container1;
-	private JTable trainTable;
+	private JTable trainJourneyTable;
 	// private TrainAddingDialog trainAddingDialog;
 	// private TrainUpdateDialog trainUpdateDialog;
 	private TrainJourneyTableModel trainJourneyTableModel;
 	private Employee employee;
 	private TrainJourneyAddingDialog trainJourneyAddingDialog;
+	private TrainJourneyDAO trainJourneyDAO;
+	private TrainJourneyUpdateDialog trainJourneyUpdateDialog;
 
 	public FormTrainJourneyManagement(Employee employee) {
+		
+		trainJourneyDAO = new TrainJourneyDAO();
 		this.employee = employee;
 		setLayout(new BorderLayout());
 
@@ -95,31 +102,31 @@ public class FormTrainJourneyManagement extends JPanel implements ActionListener
 
 		// table container
 		trainJourneyTableModel = new TrainJourneyTableModel();
-		trainTable = new JTable(trainJourneyTableModel);
+		trainJourneyTable = new JTable(trainJourneyTableModel);
 
 		container0.setLayout(new MigLayout("wrap, fill, insets 15", "[fill]", "[grow 0][fill]"));
 		container0.add(container1);
-		container0.add(new JScrollPane(trainTable));
+		container0.add(new JScrollPane(trainJourneyTable));
 
-		if (trainTable.getColumnModel().getColumnCount() > 0) {
-			trainTable.getColumnModel().getColumn(2).setPreferredWidth(250);
-			trainTable.getColumnModel().getColumn(3).setPreferredWidth(150);
+		if (trainJourneyTable.getColumnModel().getColumnCount() > 0) {
+			trainJourneyTable.getColumnModel().getColumn(2).setPreferredWidth(250);
+			trainJourneyTable.getColumnModel().getColumn(3).setPreferredWidth(150);
 		}
 
 		// Change scroll style
-		JScrollPane scroll = (JScrollPane) trainTable.getParent().getParent();
+		JScrollPane scroll = (JScrollPane) trainJourneyTable.getParent().getParent();
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		scroll.getVerticalScrollBar().putClientProperty(FlatClientProperties.STYLE,
 				"" + "background:$Table.background;" + "track:$Table.background;" + "trackArc:999");
 
-		trainTable.getTableHeader().putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
-		trainTable.putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
+		trainJourneyTable.getTableHeader().putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
+		trainJourneyTable.putClientProperty(FlatClientProperties.STYLE_CLASS, "table_style");
 
 		// To Create table alignment
-		trainTable.getTableHeader()
-				.setDefaultRenderer(getAlignmentCellRender(trainTable.getTableHeader().getDefaultRenderer(), true));
-		trainTable.setDefaultRenderer(Object.class,
-				getAlignmentCellRender(trainTable.getDefaultRenderer(Object.class), false));
+		trainJourneyTable.getTableHeader()
+				.setDefaultRenderer(getAlignmentCellRender(trainJourneyTable.getTableHeader().getDefaultRenderer(), true));
+		trainJourneyTable.setDefaultRenderer(Object.class,
+				getAlignmentCellRender(trainJourneyTable.getDefaultRenderer(Object.class), false));
 
 		addNewButton.addActionListener(this);
 		updateButton.addActionListener(this);
@@ -141,43 +148,42 @@ public class FormTrainJourneyManagement extends JPanel implements ActionListener
 		}
 
 		if (e.getSource().equals(deleteButton)) {
-//			// select the selected row
-//			int selectedRow = trainTable.getSelectedRow();
-//			if (selectedRow == -1) {
-//				JOptionPane.showMessageDialog(this, "Please select a row to delete.");
-//			} else {
-//				String trainID = (String) trainTable.getValueAt(selectedRow, 0);
-//
-//				int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this train?",
-//						"Warning", JOptionPane.YES_NO_OPTION);
-//
-//				if (option == JOptionPane.YES_OPTION) {
-//					int rowsAffected = trainDAO.deleteTrainByID(trainID);
-//					if (rowsAffected > 0) {
-//						search();
-//					} else {
-//						JOptionPane.showMessageDialog(this, "Cannot delete movie", "Failed", JOptionPane.ERROR_MESSAGE);
-//					}
-//				}
-//			}
+			// select the selected row
+			int selectedRow = trainJourneyTable.getSelectedRow();
+			if (selectedRow == -1) {
+				JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+			} else {
+				int trainJourneyID = (int) trainJourneyTable.getValueAt(selectedRow, 0);
+
+				int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this train?",
+						"Warning", JOptionPane.YES_NO_OPTION);
+
+				if (option == JOptionPane.YES_OPTION) {
+					int rowsAffected = trainJourneyDAO.deleteTrainJourneyByID(trainJourneyID);
+					if (rowsAffected > 0) {
+						search();
+					} else {
+						JOptionPane.showMessageDialog(this, "Cannot delete movie", "Failed", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
 		}
 
 		if (e.getSource().equals(updateButton)) {
-//			int selectedRow = trainTable.getSelectedRow();
-//
-//			if (selectedRow == -1) {
-//				JOptionPane.showMessageDialog(this, "Please select a row to update.");
-//			} else {
-//				JPanel glassPane = new BlurGlassPane();
-//				Application.getInstance().setGlassPane(glassPane);
-//				glassPane.setVisible(true);
-//				int trainID = Integer.parseInt((String) trainTable.getValueAt(selectedRow, 0));
-//				Train train = trainDAO.getTrainByID(trainID);
-//				trainUpdateDialog = new TrainUpdateDialog(train);
-//				trainUpdateDialog.setFormTrainManagement(this);
-//				trainUpdateDialog.setModal(true);
-//				trainUpdateDialog.setVisible(true);
-//			}
+			int selectedRow = trainJourneyTable.getSelectedRow();
+
+			if (selectedRow == -1) {
+				JOptionPane.showMessageDialog(this, "Please select a row to update.");
+			} else {
+				JPanel glassPane = new BlurGlassPane();
+				Application.getInstance().setGlassPane(glassPane);
+				glassPane.setVisible(true);
+				int trainID = (int) trainJourneyTable.getValueAt(selectedRow, 0);
+				trainJourneyUpdateDialog = new TrainJourneyUpdateDialog(trainID);
+				trainJourneyUpdateDialog.setFormTrainManagement(this);
+				trainJourneyUpdateDialog.setModal(true);
+				trainJourneyUpdateDialog.setVisible(true);
+			}
 		}
 
 	}
@@ -213,10 +219,10 @@ public class FormTrainJourneyManagement extends JPanel implements ActionListener
 	// Custom Cell Renderer for multiline text
 
 	public void search() {
-//		String trainNumberToFind = searchTextField.getText().trim();
-//		List<TrainDetails> trainDetailsList = trainDAO.getTrainDetailsByTrainNumber(trainNumberToFind);
-//		trainTableModel.setTrainDetailsList(trainDetailsList);
-//		trainTableModel.fireTableDataChanged();
+		String trainNumberToFind = searchTextField.getText().trim();
+		List<TrainJourneyDetails> trainDetailsList = trainJourneyDAO.getAllTrainJourneyDetailsByTrainNumber(trainNumberToFind);
+		trainJourneyTableModel.setTrainDetailsList(trainDetailsList);
+		trainJourneyTableModel.fireTableDataChanged();
 	}
 }
 

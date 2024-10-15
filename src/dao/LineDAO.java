@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import connectDB.ConnectDB;
 import entity.Line;
 import entity.Station;
 import entity.Stop;
+import entity.TrainJourney;
 
 public class LineDAO {
 	private ConnectDB connectDB;
@@ -74,8 +76,8 @@ public class LineDAO {
 				String stationName = rs.getString("stationName");
 				int distance = rs.getInt("distance");
 				LocalDate departureDate = LocalDate.now();
-				LocalDateTime arrivalTime = LocalDateTime.now();
-				LocalDateTime departureTime = LocalDateTime.now();
+				LocalTime arrivalTime = LocalTime.now();
+				LocalTime departureTime = LocalTime.now();
 				stopList.add(new Stop(new Station(stationID, stationName), stopOrder, distance, departureDate, arrivalTime, departureTime));
 			}
 		} catch (SQLException e) {

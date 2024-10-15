@@ -2,6 +2,7 @@ package entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class Stop {
 
@@ -11,11 +12,24 @@ public class Stop {
 	private int stopOrder;
 	private int distance;
 	private LocalDate departureDate;
-	private LocalDateTime arrivalTime;
-	private LocalDateTime departureTime;
+	private LocalTime arrivalTime;
+	private LocalTime departureTime;
 
-	public Stop(Station station, int stopOrder, int distance, LocalDate departureDate, LocalDateTime arrivalTime,
-			LocalDateTime departureTime) {
+	public Stop(int stopID, TrainJourney trainJourney, Station station, int stopOrder, int distance,
+			LocalDate departureDate, LocalTime arrivalTime, LocalTime departureTime) {
+		super();
+		this.stopID = stopID;
+		this.trainJourney = trainJourney;
+		this.station = station;
+		this.stopOrder = stopOrder;
+		this.distance = distance;
+		this.departureDate = departureDate;
+		this.arrivalTime = arrivalTime;
+		this.departureTime = departureTime;
+	}
+
+	public Stop(Station station, int stopOrder, int distance, LocalDate departureDate, LocalTime arrivalTime,
+			LocalTime departureTime) {
 		this.station = station;
 		this.stopOrder = stopOrder;
 		this.distance = distance;
@@ -26,14 +40,6 @@ public class Stop {
 
 	public int getStopID() {
 		return stopID;
-	}
-
-	public LocalDate getDepartureDate() {
-		return departureDate;
-	}
-
-	public void setDepartureDate(LocalDate departureDate) {
-		this.departureDate = departureDate;
 	}
 
 	public void setStopID(int stopID) {
@@ -72,27 +78,35 @@ public class Stop {
 		this.distance = distance;
 	}
 
-	public LocalDateTime getArrivalTime() {
+	public LocalDate getDepartureDate() {
+		return departureDate;
+	}
+
+	public void setDepartureDate(LocalDate departureDate) {
+		this.departureDate = departureDate;
+	}
+
+	public LocalTime getArrivalTime() {
 		return arrivalTime;
 	}
 
-	public void setArrivalTime(LocalDateTime arrivalTime) {
+	public void setArrivalTime(LocalTime arrivalTime) {
 		this.arrivalTime = arrivalTime;
 	}
 
-	public LocalDateTime getDepartureTime() {
+	public LocalTime getDepartureTime() {
 		return departureTime;
 	}
 
-	public void setDepartureTime(LocalDateTime departureTime) {
+	public void setDepartureTime(LocalTime departureTime) {
 		this.departureTime = departureTime;
 	}
 
 	@Override
 	public String toString() {
 		return "Stop [stopID=" + stopID + ", trainJourney=" + trainJourney + ", station=" + station + ", stopOrder="
-				+ stopOrder + ", distance=" + distance + ", arrivalTime=" + arrivalTime + ", departureTime="
-				+ departureTime + "]";
+				+ stopOrder + ", distance=" + distance + ", departureDate=" + departureDate + ", arrivalTime="
+				+ arrivalTime + ", departureTime=" + departureTime + "]";
 	}
 
 }

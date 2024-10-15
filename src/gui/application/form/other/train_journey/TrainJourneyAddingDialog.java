@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -28,8 +29,10 @@ import dao.TrainJourneyDAO;
 import entity.Line;
 import entity.Stop;
 import entity.Train;
+import entity.TrainJourney;
 import gui.application.Application;
 import net.miginfocom.swing.MigLayout;
+import raven.toast.Notifications;
 
 public class TrainJourneyAddingDialog extends JDialog implements ActionListener {
 
@@ -213,21 +216,35 @@ public class TrainJourneyAddingDialog extends JDialog implements ActionListener 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(themTauButton)) {
 			// get all the fields 
-//			String tenChuyenTau = tenChuyenTauTextField.getText().trim();
-//			Train tau = (Train) tauCombobox.getSelectedItem();
-//			Line duongDi = (Line) duongDiCombobox.getSelectedItem();
-//			double giaGoc = Double.parseDouble(giaGocTextField.getText().trim());
-//			int trainJourneyID = trainJourneyDAO.addTrainJourney(new TrainJourney(tenChuyenTau, tau, duongDi, giaGoc));
-			// add all the stops of the train journey
+			String tenChuyenTau = tenChuyenTauTextField.getText().trim();
+			Train tau = (Train) tauCombobox.getSelectedItem();
+			Line duongDi = (Line) duongDiCombobox.getSelectedItem();
+			double giaGoc = Double.parseDouble(giaGocTextField.getText().trim());
+			
+			// HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+			int trainJourneyID = trainJourneyDAO.addTrainJourney(new TrainJourney(tenChuyenTau, tau, duongDi, giaGoc));
+			
 			// get all the stops and put them in the array
 			
 			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			LocalDate screeningDateLocalDate = LocalDate.parse(screeningDate, formatter);
+			DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 			
 			for (int i = 0; i < stopRowList.size(); i++) {
-				LocalDate departureDate = LocalDate.parse(stopRowList.get(i).getDepartureDateTexField().getText().trim());
+				stopList.get(i).setTrainJourney(new TrainJourney(trainJourneyID));
+				LocalDate departureDate = LocalDate.parse(stopRowList.get(i).getDepartureDateTexField().getText().trim(), dateFormatter);
+				LocalTime arrivalTime = LocalTime.parse(stopRowList.get(i).getArrivalTimeTextField().getText().trim(), timeFormatter);
+				LocalTime departureTime = LocalTime.parse(stopRowList.get(i).getDepartureTimeTextField().getText().trim(), timeFormatter);
 				stopList.get(i).setDepartureDate(departureDate);
+				stopList.get(i).setArrivalTime(arrivalTime);
+				stopList.get(i).setDepartureTime(departureTime);
 			}
+			// add all the stops of the train journey
+			trainJourneyDAO.addStops(stopList);
+			
+			// update the table
+			formTrainJourneyManagement.search();
+			Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Thêm chuyến tàu thành công!");
+	        this.closeDialog();
 		}
 	}
 

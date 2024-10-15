@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import entity.Employee;
 import gui.application.Application;
+import gui.application.form.other.ticketbooking.FormSearchTrainJourney;
 import gui.application.form.other.train.FormTrainManagement;
 import gui.application.form.other.train_journey.FormTrainJourneyManagement;
 import gui.menu.other.Menu;
@@ -62,9 +63,9 @@ public class MainForm extends JLayeredPane {
 //				case 2:
 //					Application.showMainForm(new FormStaffManagement(employee));
 //					break;
-//				case 3:
-//					Application.showMainForm(new FormCustomerManagement());
-//					break;
+				case 3:
+					Application.showMainForm(new FormSearchTrainJourney());
+					break;
 //				case 4:
 //					switch (subIndex) {
 //					case 1:

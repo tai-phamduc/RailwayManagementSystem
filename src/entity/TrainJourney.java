@@ -24,6 +24,10 @@ public class TrainJourney {
 		this.basePrice = giaGoc;
 	}
 
+	public TrainJourney(int trainJourneyID) {
+		this.trainJourneyID = trainJourneyID;
+	}
+
 	public int getTrainJourneyID() {
 		return trainJourneyID;
 	}

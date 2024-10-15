@@ -1,5 +1,7 @@
 package entity;
 
+import java.util.Objects;
+
 public class Train {
 	private int trainID;
 	private String trainNumber;
@@ -49,6 +51,23 @@ public class Train {
 	@Override
 	public String toString() {
 		return this.getTrainNumber();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(trainID);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Train other = (Train) obj;
+		return trainID == other.trainID;
 	}
 
 }

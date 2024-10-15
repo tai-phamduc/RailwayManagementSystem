@@ -1,7 +1,6 @@
-﻿create database TrainTicketBookingSystem
-go
-
-use TrainTicketBookingSystem
+﻿--create database TrainTicketBookingSystem
+--go
+--use TrainTicketBookingSystem
 
 CREATE TABLE Employee (
     EmployeeID VARCHAR(50) PRIMARY KEY,  -- String in Java, VARCHAR in SQL
@@ -194,19 +193,18 @@ CREATE TABLE LineStop (
 );
 
 CREATE TABLE Stop (
-    stopID INT IDENTITY(1,1) PRIMARY KEY, 
-    trainJourneyID INT NOT NULL, 
-    stationID INT NOT NULL, 
+    stopID INT IDENTITY(1,1) PRIMARY KEY,  -- Auto-increment primary key
+    trainJourneyID INT NOT NULL,           -- Foreign key to TrainJourney table
+    stationID INT NOT NULL,                -- Foreign key to Station table
     stopOrder INT NOT NULL,
-    distance INT NOT NULL, 
-    arrivalTime DATETIME NOT NULL,
-    departureTime DATETIME NOT NULL,
-
-    CONSTRAINT FK_TrainJourney FOREIGN KEY (trainJourneyID) REFERENCES TrainJourney(trainJourneyID)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT FK_NotLineStation FOREIGN KEY (stationID) REFERENCES Station(stationID)
-        ON DELETE CASCADE ON UPDATE CASCADE
+    distance INT NOT NULL,
+    departureDate DATE NOT NULL,
+    arrivalTime TIME NOT NULL,
+    departureTime TIME NOT NULL,
+    CONSTRAINT FK_TrainJourney FOREIGN KEY (trainJourneyID) REFERENCES TrainJourney(trainJourneyID),
+    CONSTRAINT FK_StopStation FOREIGN KEY (stationID) REFERENCES Station(stationID)
 );
+
 
 CREATE TABLE Passenger (
     passengerID INT IDENTITY(1,1) PRIMARY KEY,
@@ -257,17 +255,17 @@ CREATE TABLE TicketDetail (
 );
 
 INSERT INTO Line (lineName) VALUES (N'Đà Lạt - Trại Mát')
-INSERT INTO TrainJourney (trainJourneyName, trainID, lineID, basePrice) VALUES (N'Đà lạt - Trại Mát 9:55am', 7, 1, 2000);
+INSERT INTO TrainJourney (trainJourneyName, trainID, lineID, basePrice) VALUES (N'Đà lạt - Trại Mát 9:55am', 1, 1, 2000);
 INSERT INTO Station (stationName) VALUES (N'Đà Lạt')
 INSERT INTO Station (stationName) VALUES (N'Trại Mát')
 INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (1, 1, 1, 0)
 INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (1, 2, 2, 7)
-INSERT INTO Stop (trainJourneyID, stationID, stopOrder, distance, arrivalTime, departureTime) VALUES (1, 1, 1, 0, '2024-10-16 09:55:00', '2024-10-16 09:55:00')
-INSERT INTO Stop (trainJourneyID, stationID, stopOrder, distance, arrivalTime, departureTime) VALUES (1, 2, 2, 7, '2024-10-16 10:25:00', '2024-10-16 10:25:00')
+INSERT INTO Stop (trainJourneyID, stationID, stopOrder, distance, departureDate, arrivalTime, departureTime) VALUES (1, 1, 1, 0, '2024-10-16', '09:55:00', '09:55:00')
+INSERT INTO Stop (trainJourneyID, stationID, stopOrder, distance, departureDate, arrivalTime, departureTime) VALUES (1, 2, 2, 7, '2024-10-16', '10:25:00', '10:25:00')
 INSERT INTO Passenger (fullName, passengerType, identificationNumber) VALUES (N'Phạm Đức Tài', N'Người lớn', '080203001008')
 INSERT INTO Customer (fullName, phoneNumber, email, identificationNumber) VALUES (N'Phạm Đức Tài', '0846107843', 'phamductai10272003@gmail.com', '080203001008')
 INSERT INTO [Order] (orderDate, note, paymentMethod, customerID, trainJourneyID, employeeID) VALUES (GETDATE(), N'Đây là một ghi chú', N'Tiền mặt', 1, 1, '1')
-INSERT INTO Ticket (trainJourneyID, seatID, passengerID, orderID) VALUES (1, 997, 1, 1)
+INSERT INTO Ticket (trainJourneyID, seatID, passengerID, orderID) VALUES (1, 1, 1, 1)
 INSERT INTO TicketDetail (stopID, ticketID) VALUES (1, 1)
 INSERT INTO TicketDetail (stopID, ticketID) VALUES (2, 1)
 
@@ -288,10 +286,6 @@ INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (2, 6, 4, 3
 INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (2, 7, 5, 411)
 
 select stopOrder, s.stationID, s.stationName, distance from line l join LineStop ls on l.lineID = ls.lineID join station s on ls.stationID = s.stationID where l.lineID = 1
-
-{ "Mã chuyến tàu", "Số hiệu tàu", "Hành trình", "Thời gian", "Cự ly", "Tổng hành khách")
-
-WRITE A QUERY TO TAKE OUT THESE COLUMNS TrainJourneyID, trainID, train journey departureStation - arrivalStation as Journey, trainJourney departuretime - arrivaltime as time, train journey distance, ticketbooked/numberOfSeats as Book
 
 SELECT 
     tj.trainJourneyID,
@@ -373,6 +367,7 @@ where trainJourneyID = 1
 --------------------------------------
 
 go
+select * from dbo.fn_GetAllTrainJourneyDetails()
 CREATE FUNCTION dbo.fn_GetAllTrainJourneyDetails()
 RETURNS TABLE
 AS
@@ -401,6 +396,14 @@ RETURN
          WHERE 
             sp1.trainJourneyID = tj.trainJourneyID 
             AND sp1.stopOrder = 1) AS departureTime,
+
+		(SELECT 
+            sp1.departureDate
+         FROM 
+            Stop sp1
+         WHERE 
+            sp1.trainJourneyID = tj.trainJourneyID 
+            AND sp1.stopOrder = 1) AS departureDate,
         
         -- Arrival station and time
         (SELECT 
@@ -468,37 +471,88 @@ SELECT trainJourneyID, trainJourneyName, TrainNumber, departureStation, arrivalS
 
 select * from TrainJourney
 
+select * from Stop
+
+SELECT trainJourneyName, t.trainID, t.trainNumber, t.Status, l.lineID, l.lineName, basePrice FROM TrainJourney tj join Train t on tj.trainID = t.TrainID join line l on tj.lineID = l.lineID WHERE trainJourneyID = 1
+
+select stopID, trainJourneyID, station.stationID, station.stationName, stopOrder, distance, departureDate, arrivalTime, departureTime from stop join Station on stop.stationID = Station.stationID where trainJourneyID = 8
+
+update TrainJourney set trainJourneyName = 'Something else', basePrice = 14 where trainJourneyID = 8
+
+select * from stop
+
+UPDATE Stop SET departureDate = '2024-10-16', arrivalTime = '11:30:00', departureTime = '11:30:00' WHERE stopID = 17;
 
 
+select * from trainjourney
+select * from station
 
-   
+SELECT 
+    tj.trainJourneyID, 
+    tj.trainJourneyName, 
+    tj.trainID, 
+    tj.basePrice, 
+    ds.stationID AS departureStationID, 
+    ds.departureDate AS departureDate, 
+    ds.departureTime AS departureTime, 
+    arrival_stop.stationID AS arrivalStationID, 
+    arrival_stop.arrivalTime AS arrivalTime
+FROM 
+    TrainJourney tj
+JOIN 
+    Stop ds ON tj.trainJourneyID = ds.trainJourneyID  -- Departure stop
+JOIN 
+    Stop arrival_stop ON tj.trainJourneyID = arrival_stop.trainJourneyID  -- Arrival stop
+WHERE 
+    ds.stationID = 3  -- Parameter for the departure station ID
+    AND arrival_stop.stationID = 6  -- Parameter for the arrival station ID
+    AND ds.departureDate = '2024-10-16'  -- Parameter for the departure date
+    AND ds.stopOrder < arrival_stop.stopOrder  -- Ensure departure stop is before arrival stop
+ORDER BY 
+    ds.departureTime;
 
 
+go
+CREATE PROCEDURE GetTrainJourneysByStationNames
+    @departureStationName NVARCHAR(255),
+    @arrivalStationName NVARCHAR(255),
+    @departureDate DATE
+AS
+BEGIN
+    SELECT 
+        tj.trainJourneyID,
+        tj.trainJourneyName,
+        ds.stationID AS departureStationID,
+        ds.departureDate,
+        arrival_stop.stationID AS arrivalStationID,
+        arrival_stop.arrivalTime
+    FROM 
+        TrainJourney tj
+    JOIN 
+        Stop ds ON tj.trainJourneyID = ds.trainJourneyID  -- Departure stop
+    JOIN 
+        Stop arrival_stop ON tj.trainJourneyID = arrival_stop.trainJourneyID  -- Arrival stop
+    JOIN
+        Station dep_station ON ds.stationID = dep_station.stationID
+    JOIN
+        Station arr_station ON arrival_stop.stationID = arr_station.stationID
+    WHERE 
+        dep_station.stationName = @departureStationName
+        AND arr_station.stationName = @arrivalStationName
+        AND ds.departureDate = @departureDate
+        AND ds.stopOrder < arrival_stop.stopOrder  -- Ensure departure stop is before arrival stop
+    ORDER BY 
+        ds.departureTime;
+END
+go
 
+select * from trainjourney
 
+DECLARE @departureStationName NVARCHAR(255) = N'Sài Gòn';
+DECLARE @arrivalStationName NVARCHAR(255) = N'Nha Trang';
+DECLARE @departureDate DATE = '2024-10-17';  -- Use the format YYYY-MM-DD
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+EXEC GetTrainJourneysByStationNames @departureStationName, @arrivalStationName, @departureDate
 
 
 
