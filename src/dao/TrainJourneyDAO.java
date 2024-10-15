@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import connectDB.ConnectDB;
+import entity.TrainJourney;
 import entity.TrainJourneyDetails;
 
 public class TrainJourneyDAO {
@@ -40,7 +41,6 @@ public class TrainJourneyDAO {
 				int totalDistance = rs.getInt("totalDistance");
 				int bookedTickets = rs.getInt("bookedTickets");
 				int totalSeats = rs.getInt("totalSeats");
-				
 				DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 				
@@ -50,6 +50,11 @@ public class TrainJourneyDAO {
 			e.printStackTrace();
 		}
 		return trainJourneyDetailsList;
+	}
+
+	public void addTrainJourney(TrainJourney trainJourney) {
+		
+		
 	}	
 	
 }

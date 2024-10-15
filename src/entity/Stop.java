@@ -1,5 +1,6 @@
 package entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Stop {
@@ -9,23 +10,30 @@ public class Stop {
 	private Station station;
 	private int stopOrder;
 	private int distance;
+	private LocalDate departureDate;
 	private LocalDateTime arrivalTime;
 	private LocalDateTime departureTime;
 
-	public Stop(int stopID, TrainJourney trainJourney, Station station, int stopOrder, int distance,
-			LocalDateTime arrivalTime, LocalDateTime departureTime) {
-			super();
-			this.stopID = stopID;
-			this.trainJourney = trainJourney;
-			this.station = station;
-			this.stopOrder = stopOrder;
-			this.distance = distance;
-			this.arrivalTime = arrivalTime;
-			this.departureTime = departureTime;
+	public Stop(Station station, int stopOrder, int distance, LocalDate departureDate, LocalDateTime arrivalTime,
+			LocalDateTime departureTime) {
+		this.station = station;
+		this.stopOrder = stopOrder;
+		this.distance = distance;
+		this.departureDate = departureDate;
+		this.arrivalTime = arrivalTime;
+		this.departureTime = departureTime;
 	}
 
 	public int getStopID() {
 		return stopID;
+	}
+
+	public LocalDate getDepartureDate() {
+		return departureDate;
+	}
+
+	public void setDepartureDate(LocalDate departureDate) {
+		this.departureDate = departureDate;
 	}
 
 	public void setStopID(int stopID) {

@@ -29,7 +29,7 @@ public class Line {
 
 	@Override
 	public String toString() {
-		return "Line [lineID=" + lineID + ", lineName=" + lineName + "]";
+		return this.lineName;
 	}
 
 }

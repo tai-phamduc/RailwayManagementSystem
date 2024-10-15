@@ -271,6 +271,24 @@ INSERT INTO Ticket (trainJourneyID, seatID, passengerID, orderID) VALUES (1, 997
 INSERT INTO TicketDetail (stopID, ticketID) VALUES (1, 1)
 INSERT INTO TicketDetail (stopID, ticketID) VALUES (2, 1)
 
+INSERT INTO Line (lineName) VALUES (N'Sài Gòn - Nha Trang')
+
+INSERT INTO Station (stationName) VALUES (N'Sài Gòn')
+INSERT INTO Station (stationName) VALUES (N'Dĩ An')
+INSERT INTO Station (stationName) VALUES (N'Biên Hòa')
+INSERT INTO Station (stationName) VALUES (N'Tháp Chàm')
+INSERT INTO Station (stationName) VALUES (N'Nha Trang')
+
+select * from station
+
+INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (2, 3, 1, 0)
+INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (2, 4, 2, 19)
+INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (2, 5, 3, 29)
+INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (2, 6, 4, 318)
+INSERT INTO LineStop (lineID, stationID, stopOrder, distance) VALUES (2, 7, 5, 411)
+
+select stopOrder, s.stationID, s.stationName, distance from line l join LineStop ls on l.lineID = ls.lineID join station s on ls.stationID = s.stationID where l.lineID = 1
+
 { "Mã chuyến tàu", "Số hiệu tàu", "Hành trình", "Thời gian", "Cự ly", "Tổng hành khách")
 
 WRITE A QUERY TO TAKE OUT THESE COLUMNS TrainJourneyID, trainID, train journey departureStation - arrivalStation as Journey, trainJourney departuretime - arrivaltime as time, train journey distance, ticketbooked/numberOfSeats as Book
@@ -445,6 +463,10 @@ RETURN
 go
 
 SELECT trainJourneyID, trainJourneyName, TrainNumber, departureStation, arrivalStation, departureTime, arrivalTime, totalDistance, bookedTickets, totalSeats FROM dbo.fn_GetAllTrainJourneyDetails();
+
+
+
+
    
 
 

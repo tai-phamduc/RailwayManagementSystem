@@ -3,7 +3,7 @@ package entity;
 public class TrainJourney {
 
 	private int trainJourneyID;
-	private String traInJourneyName;
+	private String trainJourneyName;
 	private Train train;
 	private double basePrice;
 	private Line line;
@@ -11,10 +11,17 @@ public class TrainJourney {
 	public TrainJourney(int trainJourneyID, String traInJourneyName, Train train, double basePrice, Line line) {
 		super();
 		this.trainJourneyID = trainJourneyID;
-		this.traInJourneyName = traInJourneyName;
+		this.trainJourneyName = traInJourneyName;
 		this.train = train;
 		this.basePrice = basePrice;
 		this.line = line;
+	}
+
+	public TrainJourney(String tenChuyenTau, Train tau, Line duongDi, double giaGoc) {
+		this.trainJourneyName = tenChuyenTau;
+		this.train = tau;
+		this.line = duongDi;
+		this.basePrice = giaGoc;
 	}
 
 	public int getTrainJourneyID() {
@@ -26,11 +33,11 @@ public class TrainJourney {
 	}
 
 	public String getTraInJourneyName() {
-		return traInJourneyName;
+		return trainJourneyName;
 	}
 
 	public void setTraInJourneyName(String traInJourneyName) {
-		this.traInJourneyName = traInJourneyName;
+		this.trainJourneyName = traInJourneyName;
 	}
 
 	public Train getTrain() {
@@ -59,7 +66,7 @@ public class TrainJourney {
 
 	@Override
 	public String toString() {
-		return "TrainJourney [trainJourneyID=" + trainJourneyID + ", traInJourneyName=" + traInJourneyName + ", train="
+		return "TrainJourney [trainJourneyID=" + trainJourneyID + ", traInJourneyName=" + trainJourneyName + ", train="
 				+ train + ", basePrice=" + basePrice + ", line=" + line + "]";
 	}
 

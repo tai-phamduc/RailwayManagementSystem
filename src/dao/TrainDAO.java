@@ -191,6 +191,25 @@ public class TrainDAO {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public List<Train> getAllTrain() {
+		Connection connection = connectDB.getConnection();
+		List<Train> trainList = new ArrayList<Train>();
+		try {
+			PreparedStatement s = connection.prepareStatement("SELECT TrainID, TrainNumber, Status from Train");
+			ResultSet rs = s.executeQuery();
+			while (rs.next()) {
+				int trainID = rs.getInt("TrainID");
+				String trainNumber = rs.getString("TrainNumber");
+				String status = rs.getString("Status");
+				trainList.add(new Train(trainID, trainNumber, status));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return trainList;
 	}	
 	
 }

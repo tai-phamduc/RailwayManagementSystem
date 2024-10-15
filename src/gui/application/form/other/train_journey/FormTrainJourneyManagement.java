@@ -29,6 +29,7 @@ import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 import entity.Employee;
+import entity.TrainJourney;
 import gui.application.Application;
 import net.miginfocom.swing.MigLayout;
 
@@ -46,6 +47,7 @@ public class FormTrainJourneyManagement extends JPanel implements ActionListener
 	// private TrainUpdateDialog trainUpdateDialog;
 	private TrainJourneyTableModel trainJourneyTableModel;
 	private Employee employee;
+	private TrainJourneyAddingDialog trainJourneyAddingDialog;
 
 	public FormTrainJourneyManagement(Employee employee) {
 		this.employee = employee;
@@ -129,13 +131,13 @@ public class FormTrainJourneyManagement extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(addNewButton)) {
-//			JPanel glassPane = new BlurGlassPane();
-//			Application.getInstance().setGlassPane(glassPane);
-//			glassPane.setVisible(true);
-//			trainAddingDialog = new TrainAddingDialog();
-//			trainAddingDialog.setFormTrainManagement(this);
-//			trainAddingDialog.setModal(true);
-//			trainAddingDialog.setVisible(true);
+			JPanel glassPane = new BlurGlassPane();
+			Application.getInstance().setGlassPane(glassPane);
+			glassPane.setVisible(true);
+			trainJourneyAddingDialog = new TrainJourneyAddingDialog();
+			trainJourneyAddingDialog.setFormTrainManagement(this);
+			trainJourneyAddingDialog.setModal(true);
+			trainJourneyAddingDialog.setVisible(true);
 		}
 
 		if (e.getSource().equals(deleteButton)) {

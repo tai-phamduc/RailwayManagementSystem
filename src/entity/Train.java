@@ -48,7 +48,7 @@ public class Train {
 
 	@Override
 	public String toString() {
-		return "Train [trainID=" + trainID + ", trainNumber=" + trainNumber + ", status=" + status + "]";
+		return this.getTrainNumber();
 	}
 
 }
