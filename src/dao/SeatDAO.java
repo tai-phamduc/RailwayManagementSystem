@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import connectDB.ConnectDB;
 import entity.Coach;
@@ -56,6 +58,24 @@ public class SeatDAO {
 	    }
 
 	    return -1;
+	}
+
+	public List<Seat> getSeats(Coach selectedCoach) {
+		Connection connection = connectDB.getConnection();
+		List<Seat> seatList = new ArrayList<Seat>();
+		try {
+			PreparedStatement s = connection.prepareStatement("select SeatID, seatNumber, CoachID from seat where CoachID = ?");
+			s.setInt(1, selectedCoach.getCoachID());
+			ResultSet rs = s.executeQuery();
+			while (rs.next()) {
+				int seatID = rs.getInt("seatID");
+				int seatNumber = rs.getInt("seatNumber");
+				seatList.add(new Seat(seatID, seatNumber, selectedCoach));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return seatList;
 	}
 	
 }

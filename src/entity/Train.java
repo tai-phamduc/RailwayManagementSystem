@@ -22,7 +22,11 @@ public class Train {
 	public Train(int trainID) {
 		this.trainID = trainID;
 	}
-
+	
+	public Train(int trainID, String trainNumber) {
+		this.trainID = trainID;
+		this.trainNumber = trainNumber;
+	}
 
 	public int getTrainID() {
 		return trainID;

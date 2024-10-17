@@ -20,6 +20,7 @@ import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import entity.Employee;
 import gui.application.form.LoginForm;
 import gui.application.form.MainForm;
+import gui.application.form.other.ticketbooking.FormSearchTrainJourney;
 import gui.application.form.other.train.FormTrainManagement;
 
 public class Application extends JFrame {
@@ -35,7 +36,7 @@ public class Application extends JFrame {
 //		setContentPane(loginForm);
 		employee = new Employee("1", "Pham Duc Tai", true, LocalDate.of(2003, 10, 27), "phamductai102703", "0846107843", "Manager", LocalDate.of(2024, 1, 5), 1000, "/images/avatar");
 		mainForm = new MainForm(employee);
-		mainForm.showForm(new FormTrainManagement());
+		mainForm.showForm(new FormSearchTrainJourney());
 		setContentPane(mainForm);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		app = this;
