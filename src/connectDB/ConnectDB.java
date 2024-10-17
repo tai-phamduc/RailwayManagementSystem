@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ConnectDB {
-	private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=TrainTicketBookingSystem;encrypt=false;";
+	private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=TrainTicketBookingSystem;encrypt=False;";
 	private static final String USER = "sa";
 	private static final String PASSWORD = "22639301";
 

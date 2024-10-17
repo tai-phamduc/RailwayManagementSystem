@@ -1,6 +1,6 @@
-﻿--create database TrainTicketBookingSystem
---go
---use TrainTicketBookingSystem
+﻿create database TrainTicketBookingSystem
+go
+use TrainTicketBookingSystem
 
 CREATE TABLE Employee (
     EmployeeID VARCHAR(50) PRIMARY KEY,  -- String in Java, VARCHAR in SQL
@@ -14,7 +14,25 @@ CREATE TABLE Employee (
     Salary DECIMAL(15, 2) NOT NULL,      -- Salary with 2 decimal precision
     ImageSource VARCHAR(255) NULL        -- Path to the image, optional
 );
+go
 
+CREATE FUNCTION dbo.GetAllEmployee()
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT	
+	e.EmployeeID,
+	e.FullName,
+	e.Gender,
+	e.DateOfBirth,
+	e.Email,e.PhoneNumber,e.Role,e.Salary,e.Salary,e.ImageSource
+
+
+	FROM Employee e
+  
+);
+go
 INSERT INTO Employee (EmployeeID, FullName, Gender, DateOfBirth, Email, PhoneNumber, Role, StartingDate, Salary, ImageSource) VALUES ('1', N'Pham Duc Tai', 1, '2003-10-27', 'phamductai102703', '0846107843', N'Manager', '2024-01-05', 1000, '/images/profile');
 
 CREATE TABLE Account (

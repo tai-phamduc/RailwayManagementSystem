@@ -20,6 +20,35 @@ public class EmployeeDAO {
 		connectDB = ConnectDB.getInstance();
 		connectDB.connect();
 	}
+	public List<Employee> getAllEmployee(){
+		List<Employee> employeeList = new ArrayList<Employee>();
+		Connection connection = connectDB.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			statement = connection.prepareStatement("SELECT EmployeeID, FullName, Gender, DateOfBirth, Email, PhoneNumber, Role, StartingDate, Salary, ImageSource FROM dbo.GetAllEmployee()");
+			resultSet = statement.executeQuery();
+		
+		while (resultSet.next()) {
+			String employeeID = resultSet.getString("EmployeeID");
+			String fullName = resultSet.getString("FullName");
+			boolean genDer = resultSet.getBoolean("Gender");
+			LocalDate dateOfBirth = resultSet.getDate("DateOfBirth").toLocalDate();
+			String email = resultSet.getString("Email");
+			String phoneNumber = resultSet.getString("PhoneNumber");
+			String role = resultSet.getString("Role");
+			LocalDate startingDate = resultSet.getDate("StartingDate").toLocalDate();
+			double salary = resultSet.getDouble("Salary");
+			String imgSource = resultSet.getString("ImageSource");
+			
+		}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return employeeList;
+		}
+	
 
 	public boolean updateAvatar(String imagePath, String employeeID) {
 		Connection connection = null;
@@ -48,7 +77,7 @@ public class EmployeeDAO {
 
 		return success;
 	}
-
+	
 //	public List<Employee> getAllEmployee() {
 //		Connection connection = connectDB.getConnection();
 //		String querySQL = "SELECT EmployeeID, FullName, Gender, PhoneNumber, Email, Role FROM Employee";
