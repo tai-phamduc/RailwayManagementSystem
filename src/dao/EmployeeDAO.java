@@ -20,7 +20,7 @@ public class EmployeeDAO {
 		connectDB = ConnectDB.getInstance();
 		connectDB.connect();
 	}
-	public List<Employee> getAllEmployee(){
+	public List<Employee> getAllEmployee(String iDtoFind){
 		List<Employee> employeeList = new ArrayList<Employee>();
 		Connection connection = connectDB.getConnection();
 		PreparedStatement statement = null;
@@ -217,5 +217,7 @@ public class EmployeeDAO {
 		}
 		return false;
 	}
+	
+	
 
 }

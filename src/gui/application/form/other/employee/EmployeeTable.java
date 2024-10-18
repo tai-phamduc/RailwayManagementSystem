@@ -49,10 +49,35 @@ public class EmployeeTable extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		// TODO Auto-generated method stub
-		return null;
+		Employee employee = employeeList.get(rowIndex);
+		switch (columnIndex) {
+		case 0:
+			return employee.getEmployeeID();
+		case 1:
+			return employee.getFullName();
+		case 2:
+			return employee.isGender();
+		case 3:
+			return employee.getDateOfBirth();
+		case 4:
+			return employee.getEmail();
+		case 5:
+			return employee.getPhoneNumber();
+		case 6:
+			return employee.getRole();
+		case 7:
+			return employee.getStartingDate();
+		case 8:
+			return employee.getSalary();
+		case 9:
+			return employee.getImageSource();
+	}
+	return null;
 	}
 	
+	public void setEmployeeList(List<Employee> empoyLists) {
+		this.employeeList = empoyLists;
+	}
 	
 
 }

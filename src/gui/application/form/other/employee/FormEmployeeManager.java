@@ -18,6 +18,7 @@ import dao.EmployeeDAO;
 import dao.TrainDAO;
 import entity.Employee;
 import entity.TrainDetails;
+import entity.TrainJourneyDetails;
 import gui.application.form.other.train.TrainAddingDialog;
 import gui.application.form.other.train.TrainTableModel;
 import gui.application.form.other.train.TrainUpdateDialog;
@@ -35,17 +36,19 @@ public class FormEmployeeManager extends JPanel implements ActionListener{
 	private EmployeeTable emplyeeTable;
 	private TrainAddingDialog trainAddingDialog;
 	private EmployeeDAO employeeDao;
+	private Employee employee;
 	
-	
-	public FormEmployeeManager() {
+	public FormEmployeeManager(Employee employee) {
 		setLayout(new BorderLayout());
 		
 
 		employeeDao = new EmployeeDAO();
+		this.employee = employee;
+		setLayout(new BorderLayout());
 		container0 = new JPanel();
-		
-		
 		container1 = new JPanel();
+		
+		
 		searchTextField = new JTextField();
 		searchTextField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Tìm kiếm");
 		addNewButton = new JButton("Thêm mới");
@@ -63,8 +66,26 @@ public class FormEmployeeManager extends JPanel implements ActionListener{
 
 		searchTextField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_ICON,
 				new FlatSVGIcon("gui/icon/svg/search.svg", 0.35f));
-	}
+		
+		searchTextField.getDocument().addDocumentListener(new DocumentListener() {
 
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				search();
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				search();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				search();
+			}
+		});
+
+	}
 //		searchTextField.getDocument().addDocumentListener(new DocumentListener() {
 
 //			@Override
@@ -97,5 +118,12 @@ public class FormEmployeeManager extends JPanel implements ActionListener{
 //		trainTableModel.setTrainDetailsList(trainDetailsList);
 //		trainTableModel.fireTableDataChanged();
 //	}
+	public void search() {
+		String IDtoFind = searchTextField.getText().trim();
+		List<Employee> employeeList = employeeDao.getAllEmployee(IDtoFind);
+		emplyeeTable.setEmployeeList(employeeList);;
+		emplyeeTable.fireTableDataChanged();
+	}
 }
+
 

@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import entity.Employee;
 import gui.application.Application;
+import gui.application.form.other.employee.FormEmployeeManager;
 import gui.application.form.other.ticketbooking.FormSearchTrainJourney;
 import gui.application.form.other.train.FormTrainManagement;
 import gui.application.form.other.train_journey.FormTrainJourneyManagement;
@@ -61,7 +62,7 @@ public class MainForm extends JLayeredPane {
 					Application.showMainForm(new FormTrainJourneyManagement(employee));
 					break;
 //				case 2:
-//					Application.showMainForm(new FormStaffManagement(employee));
+//					Application.showMainForm(new FormEmployeeManager(employee));
 //					break;
 				case 3:
 					Application.showMainForm(new FormSearchTrainJourney());
@@ -79,6 +80,10 @@ public class MainForm extends JLayeredPane {
 //						break;
 //					}
 //					break;
+					// man hinh quan ly nhan vien
+				case 6:
+					Application.showMainForm(new FormEmployeeManager(employee));
+					break;
 //				case 5:
 //					switch (subIndex) {
 //					case 1:
@@ -112,7 +117,7 @@ public class MainForm extends JLayeredPane {
 //					}
 //					break;
 //				case 7:
-//					Application.logout();
+//					Application.showMainForm(new FormEmployeeManager(employee));
 //					break;
 				default:
 					action.cancel();
