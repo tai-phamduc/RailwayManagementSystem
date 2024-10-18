@@ -223,7 +223,6 @@ CREATE TABLE Stop (
     CONSTRAINT FK_StopStation FOREIGN KEY (stationID) REFERENCES Station(stationID)
 );
 
-
 CREATE TABLE Passenger (
     passengerID INT IDENTITY(1,1) PRIMARY KEY,
     fullName NVARCHAR(255) NOT NULL, 
@@ -529,16 +528,21 @@ WHERE
 ORDER BY 
     ds.departureTime;
 
-
 go
-CREATE PROCEDURE GetTrainJourneysByStationNames
+CREATE FUNCTION dbo.GetTrainJourneysByStationNames
+(
     @departureStationName NVARCHAR(255),
     @arrivalStationName NVARCHAR(255),
     @departureDate DATE
+)
+RETURNS TABLE
 AS
-BEGIN
+RETURN
+(
     SELECT 
         tj.trainJourneyID,
+		t.TrainID,
+		t.TrainNumber,
         tj.trainJourneyName,
         ds.stationID AS departureStationID,
         ds.departureDate,
@@ -546,6 +550,8 @@ BEGIN
         arrival_stop.arrivalTime
     FROM 
         TrainJourney tj
+	JOIN 
+		Train t ON  tj.trainID = t.TrainID
     JOIN 
         Stop ds ON tj.trainJourneyID = ds.trainJourneyID  -- Departure stop
     JOIN 
@@ -559,18 +565,90 @@ BEGIN
         AND arr_station.stationName = @arrivalStationName
         AND ds.departureDate = @departureDate
         AND ds.stopOrder < arrival_stop.stopOrder  -- Ensure departure stop is before arrival stop
+    -- Using TOP 1000 to allow ORDER BY
     ORDER BY 
-        ds.departureTime;
-END
+        ds.departureTime
+    OFFSET 0 ROWS
+);
 go
 
-select * from trainjourney
+SELECT * FROM dbo.GetTrainJourneysByStationNames(N'Biên Hòa', N'Tháp Chàm', '2024-10-17');
 
-DECLARE @departureStationName NVARCHAR(255) = N'Sài Gòn';
-DECLARE @arrivalStationName NVARCHAR(255) = N'Nha Trang';
-DECLARE @departureDate DATE = '2024-10-17';  -- Use the format YYYY-MM-DD
+select * from stop join station on stop.stationID = station.stationID where trainJourneyID = 9 
 
-EXEC GetTrainJourneysByStationNames @departureStationName, @arrivalStationName, @departureDate
+-------------------------------------
+--- create new function 16/10
+CREATE FUNCTION dbo.GetTrainJourneysByStationNames
+(
+    @departureStationName NVARCHAR(255),
+    @arrivalStationName NVARCHAR(255),
+    @departureDate DATE
+)
+RETURNS TABLE
+AS
+RETURN
+(
+    SELECT 
+        tj.trainJourneyID,
+        tj.trainJourneyName,
+        t.TrainID,
+        t.TrainNumber,
+        ds.stationID AS departureStationID,
+        dep_station.stationName AS departureStationName,  -- Added departure station name
+        ds.departureDate,
+        ds.departureTime,
+        arrival_stop.stationID AS arrivalStationID,
+        arr_station.stationName AS arrivalStationName,  -- Added arrival station name
+        arrival_stop.departureDate AS arrivalDate,
+        arrival_stop.arrivalTime,
+        -- Calculate journey duration in minutes
+        DATEDIFF(MINUTE, 
+                 CAST(ds.departureDate AS DATETIME) + CAST(ds.departureTime AS DATETIME),  -- Departure date and time
+                 CAST(arrival_stop.departureDate AS DATETIME) + CAST(arrival_stop.arrivalTime AS DATETIME)  -- Arrival date and time
+        ) AS journeyDuration,  -- Duration in minutes
+
+        -- Calculate available seats by subtracting booked seats from total seats
+        (SELECT COUNT(*) 
+         FROM Seat s
+         JOIN Coach c ON s.CoachID = c.CoachID
+         WHERE c.TrainID = tj.trainID
+        ) - 
+        (SELECT COUNT(*) 
+         FROM Ticket t
+         JOIN TicketDetail td ON t.ticketID = td.ticketID
+         WHERE t.trainJourneyID = tj.trainJourneyID
+           AND td.stopID BETWEEN ds.stopID AND arrival_stop.stopID  -- Ensure tickets are for this leg of the journey
+        ) AS numberOfAvailableSeatsLeft  -- Available seats
+    FROM 
+        TrainJourney tj
+    JOIN 
+        Train t ON t.TrainID = tj.trainID
+    JOIN 
+        Stop ds ON tj.trainJourneyID = ds.trainJourneyID  -- Departure stop
+    JOIN 
+        Stop arrival_stop ON tj.trainJourneyID = arrival_stop.trainJourneyID  -- Arrival stop
+    JOIN
+        Station dep_station ON ds.stationID = dep_station.stationID  -- Departure station
+    JOIN
+        Station arr_station ON arrival_stop.stationID = arr_station.stationID  -- Arrival station
+    WHERE 
+        dep_station.stationName = @departureStationName
+        AND arr_station.stationName = @arrivalStationName
+        AND ds.departureDate = @departureDate
+        AND ds.stopOrder < arrival_stop.stopOrder  -- Ensure departure stop is before arrival stop
+    -- Using TOP 1000 to allow ORDER BY
+    ORDER BY 
+        ds.departureTime
+    OFFSET 0 ROWS
+);
+
+
+select SeatID, seatNumber, CoachID from seat where CoachID = 
+
+select * from coach
+
+
+
 
 
 

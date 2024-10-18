@@ -20,6 +20,7 @@ import entity.Stop;
 import entity.Train;
 import entity.TrainJourney;
 import entity.TrainJourneyDetails;
+import entity.TrainJourneyOptionItem;
 
 public class TrainJourneyDAO {
 	private ConnectDB connectDB;
@@ -271,21 +272,32 @@ public class TrainJourneyDAO {
 		return trainJourneyDetailsList;
 	}
 
-	public List<TrainJourney> searchTrainJourney(String gaDi, String gaDen, LocalDate ngayDi) {
+	public List<TrainJourneyOptionItem> searchTrainJourney(String gaDi, String gaDen, LocalDate ngayDi) {
 		Connection connection = connectDB.getConnection();
+		List<TrainJourneyOptionItem> trainJourneyOptionItemList = new ArrayList<TrainJourneyOptionItem>();
 		try {
-			CallableStatement s = connection.prepareCall("{call GetTrainJourneysByStationNames(?, ?, ?)}");
+			PreparedStatement s = connection.prepareStatement("SELECT * FROM dbo.GetTrainJourneysByStationNames(?, ?, ?)");
 			s.setString(1, gaDi);
 			s.setString(2, gaDen);
 			s.setDate(3, Date.valueOf(ngayDi));
 			ResultSet rs = s.executeQuery();
 			while (rs.next()) {
-				
+				int trainJourneyID = rs.getInt("trainJourneyID");
+				Train train = new Train(rs.getInt("trainID"), rs.getString("trainNumber"));
+				int numberOfAvailableSeatsLeft = rs.getInt("numberOfAvailableSeatsLeft");
+				LocalDate departureDate = rs.getDate("departureDate").toLocalDate();
+				LocalTime depatureTime = rs.getTime("departureTime").toLocalTime();
+				LocalDate arrivalDate = rs.getDate("arrivalDate").toLocalDate();
+				LocalTime arrivalTime = rs.getTime("arrivalTime").toLocalTime();
+				int journeyDuration = rs.getInt("journeyDuration");	
+				Station departureStation = new Station(rs.getInt("departureStationID"), rs.getString("departureStationName"));
+				Station arrivalStation = new Station(rs.getInt("arrivalStationID"), rs.getString("arrivalStationName"));
+				trainJourneyOptionItemList.add(new TrainJourneyOptionItem(trainJourneyID, train, numberOfAvailableSeatsLeft, departureDate, depatureTime, arrivalDate, arrivalTime, journeyDuration, departureStation, arrivalStation));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return trainJourneyOptionItemList;
 	}
 	
 }
